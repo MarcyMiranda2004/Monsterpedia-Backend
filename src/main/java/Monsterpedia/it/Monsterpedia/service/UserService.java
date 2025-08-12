@@ -1,0 +1,117 @@
+package Monsterpedia.it.Monsterpedia.service;
+
+import Monsterpedia.it.Monsterpedia.dto.request.UpdateUserDto;
+import Monsterpedia.it.Monsterpedia.dto.response.UserDto;
+import Monsterpedia.it.Monsterpedia.enumerated.Role;
+import Monsterpedia.it.Monsterpedia.exception.NotFoundException;
+import Monsterpedia.it.Monsterpedia.model.FavoriteList;
+import Monsterpedia.it.Monsterpedia.model.TasteList;
+import Monsterpedia.it.Monsterpedia.model.User;
+import Monsterpedia.it.Monsterpedia.repository.FavoriteListRepository;
+import Monsterpedia.it.Monsterpedia.repository.TasteListRepository;
+import Monsterpedia.it.Monsterpedia.repository.UserRepository;
+import Monsterpedia.it.Monsterpedia.service.notification.EmailService;
+import com.cloudinary.Cloudinary;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class UserService {
+    @Autowired private UserRepository userRepository;
+    @Autowired private FavoriteListRepository favoriteListRepository;
+    @Autowired private TasteListRepository tasteListRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private EmailService emailService;
+    @Autowired private Cloudinary cloudinary;
+
+    public User saveUser(UserDto userDto) {
+        User u = new User();
+        u.setUsername(userDto.getUsername());
+        u.setEmail(userDto.getEmail());
+        u.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        u.setAvatarUrl("https://ui-avatars.com/api/?name=" +
+                u.getUsername().charAt(0) + "+" + u.getUsername().charAt(1));
+        u.setRole(Role.USER);
+        User saved = userRepository.save(u);
+
+        FavoriteList fl = new FavoriteList(); fl.setUser(saved); favoriteListRepository.save(fl); saved.setFavoriteList(fl);
+        TasteList ts = new TasteList(); ts.setUser(saved); tasteListRepository.save(ts); saved.setTasteList(ts);
+
+        emailService.sendRegistrationConfirmation(saved);
+        return saved;
+    }
+
+    private UserDto toDto(User u) {
+        UserDto userDto = new UserDto();
+        userDto.setId(u.getId());
+        userDto.setUsername(u.getUsername());
+        userDto.setEmail(u.getEmail());
+        userDto.setAvatarUrl(u.getAvatarUrl());
+        userDto.setRole(u.getRole());
+        return userDto;
+    }
+
+    public User getUserByEmail(String email) throws NotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User con email " + email + " non trovato"));
+    }
+
+    public List<User> getAllUser() {
+        return userRepository.findAll();
+    }
+
+    public User getUser(Long id) throws NotFoundException {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User " + id + " non trovato"));
+    }
+
+    public User updateUser(Long id, UpdateUserDto updateUserDto) throws NotFoundException {
+        User u = getUser(id);
+        u.setUsername(updateUserDto.getUsername());
+        return userRepository.save(u);
+    }
+
+    public String updateUserAvatar(Long id, MultipartFile file) throws NotFoundException, IOException {
+        User u = getUser(id);
+        String url = (String) cloudinary.uploader()
+                .upload(file.getBytes(), Collections.emptyMap())
+                .get("url");
+        u.setAvatarUrl(url);
+        userRepository.save(u);
+        return url;
+    }
+
+    @Transactional
+    public void deleteUser(Long id, String rawPassword) throws NotFoundException {
+        User u = getUser(id);
+        if (!passwordEncoder.matches(rawPassword, u.getPassword()))
+            throw new BadCredentialsException("Password non corretta");
+        userRepository.deleteById(id);
+        emailService.sendDeleteAccountNotice(u, "Account eliminato");
+    }
+
+    public UserDto saveUserDto(UserDto userDto) {
+        return toDto(saveUser(userDto));
+    }
+
+    public List<UserDto> getAllUserDto() {
+        return getAllUser().stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public UserDto getUserDto(Long id) throws NotFoundException {
+        return toDto(getUser(id));
+    }
+
+    public UserDto updateUserDto(Long id, UpdateUserDto updateUserDto) throws NotFoundException {
+        return toDto(updateUser(id, updateUserDto));
+    }
+}
