@@ -1,5 +1,7 @@
 package Monsterpedia.it.Monsterpedia.service;
 
+import Monsterpedia.it.Monsterpedia.dto.request.ChangeEmailDto;
+import Monsterpedia.it.Monsterpedia.dto.request.ChangePasswordDto;
 import Monsterpedia.it.Monsterpedia.dto.request.UpdateUserDto;
 import Monsterpedia.it.Monsterpedia.dto.response.UserDto;
 import Monsterpedia.it.Monsterpedia.enumerated.Role;
@@ -14,6 +16,8 @@ import Monsterpedia.it.Monsterpedia.service.notification.EmailService;
 import com.cloudinary.Cloudinary;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -99,6 +103,32 @@ public class UserService {
         emailService.sendDeleteAccountNotice(u, "Account eliminato");
     }
 
+    @Transactional
+    public void updateUserPassword(Long id, ChangePasswordDto changePasswordDto) throws NotFoundException {
+        User u = getUser(id);
+        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), u.getPassword()))
+            throw new BadCredentialsException("La vecchia password non corrisponde");
+        if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmNewPassword()))
+            throw new BadCredentialsException("La nuova password e la conferma non corrispondono");
+        u.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        userRepository.save(u);
+        emailService.sendPasswordChangedNotice(u);
+    }
+
+    @Transactional
+    public void updateUserEmail(Long id, ChangeEmailDto changeEmailDto) throws NotFoundException {
+        User u = getUser(id);
+        if (!passwordEncoder.matches(changeEmailDto.getPassword(), u.getPassword()))
+            throw new BadCredentialsException("La password non corrisponde");
+        if (!u.getEmail().equals(changeEmailDto.getCurrentEmail()))
+            throw new BadCredentialsException("Inserisci l'email corrente corretta");
+        if (!changeEmailDto.getNewEmail().equals(changeEmailDto.getConfirmNewEmail()))
+            throw new BadCredentialsException("La nuova email e la conferma non corrispondono");
+        u.setEmail(changeEmailDto.getNewEmail());
+        userRepository.save(u);
+        emailService.sendEmailChangeConfirmation(u, changeEmailDto.getNewEmail(), changeEmailDto.getCurrentEmail());
+    }
+
     public UserDto saveUserDto(UserDto userDto) {
         return toDto(saveUser(userDto));
     }
@@ -113,5 +143,11 @@ public class UserService {
 
     public UserDto updateUserDto(Long id, UpdateUserDto updateUserDto) throws NotFoundException {
         return toDto(updateUser(id, updateUserDto));
+    }
+
+    public Page<UserDto> searchUserDtos(String query, Pageable pageable) {
+        Page<User> page = userRepository
+                .findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query, pageable);
+        return page.map(this::toDto);
     }
 }

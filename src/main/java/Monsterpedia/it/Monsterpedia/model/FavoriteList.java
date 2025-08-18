@@ -21,5 +21,4 @@ public class FavoriteList {
 
     @OneToMany(mappedBy = "favoriteList", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FavoriteListItem> items = new ArrayList<>();
-
 }

@@ -10,7 +10,7 @@ import lombok.Data;
 @Table(name = "monsters")
 public class Monster {
     @Id @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank
     private String name;
