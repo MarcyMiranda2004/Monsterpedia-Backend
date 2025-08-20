@@ -37,6 +37,7 @@ public class MonsterService {
         m.setFlavor(requestDto.getFlavor());
         m.setOrigin(requestDto.getOrigin());
         m.setDescription(requestDto.getDescription());
+        m.setStory(requestDto.getStory());
         m.setImageUrl(requestDto.getImageUrl());
         m.setMarcyOpinion(requestDto.getMarcyOpinion());;
         Monster newMonster = monsterRepository.save(m);
@@ -65,14 +66,16 @@ public class MonsterService {
 
     private MonsterDto toDto(Monster m) {
         MonsterDto monsterDto = new MonsterDto();
-        monsterDto.setId(monsterDto.getId());
-        monsterDto.setName(monsterDto.getName());
-        monsterDto.setCategory(monsterDto.getCategory());
-        monsterDto.setFlavor(monsterDto.getFlavor());
-        monsterDto.setOrigin(monsterDto.getOrigin());
-        monsterDto.setDescription(monsterDto.getDescription());
-        monsterDto.setImageUrl(monsterDto.getImageUrl());
-        monsterDto.setMarcyopinion(monsterDto.getMarcyopinion());
+        monsterDto.setId(m.getId());
+        monsterDto.setName(m.getName());
+        monsterDto.setCategory(m.getCategory());
+        monsterDto.setFlavor(m.getFlavor());
+        monsterDto.setOrigin(m.getOrigin());
+        monsterDto.setDescription(m.getDescription());
+        monsterDto.setStory(m.getStory());
+        monsterDto.setImageUrl(m.getImageUrl());
+        monsterDto.setMarcyOpinion(m.getMarcyOpinion());
         return monsterDto;
     }
+
 }

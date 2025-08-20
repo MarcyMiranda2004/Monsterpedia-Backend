@@ -35,10 +35,7 @@ public class MonsterController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MonsterDto> create(
-            @RequestBody @Valid CreateMonsterRequestDto cmrd,
-            BindingResult br
-    ) {
+    public ResponseEntity<MonsterDto> create(@RequestBody @Valid CreateMonsterRequestDto cmrd, BindingResult br) {
         if (br.hasErrors()) {
             String errs = br.getAllErrors().stream()
                     .map(e -> e.getDefaultMessage())

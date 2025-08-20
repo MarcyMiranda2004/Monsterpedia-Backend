@@ -1,6 +1,7 @@
 package Monsterpedia.it.Monsterpedia.model;
 
 import Monsterpedia.it.Monsterpedia.enumerated.Category;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -22,11 +23,15 @@ public class Monster {
 
     private String origin;
 
+    @Column(length = 5000)
     private String description;
 
+    @Column(length = 5000)
     private String story;
 
     private String imageUrl;
 
+    @Column(length = 5000)
+    @JsonProperty("marcyOpinion")
     private String marcyOpinion;
 }
