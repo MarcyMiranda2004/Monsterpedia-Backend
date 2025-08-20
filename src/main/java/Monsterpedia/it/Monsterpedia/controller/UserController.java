@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
-public class Usercontroller {
+public class UserController {
     private UserService userService;
-    public Usercontroller(UserService userService) { this.userService = userService; }
+    public UserController(UserService userService) { this.userService = userService; }
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(UserDto userDto, BindingResult br) {
@@ -64,7 +64,7 @@ public class Usercontroller {
     }
 
     @PutMapping("/{id}/password")
-    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN') or hasRole('CUSTOMER_SERVICE')")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<Void> changePassword(
             @PathVariable Long id,
             @Valid @RequestBody ChangePasswordDto changePasswordDto,
@@ -78,7 +78,7 @@ public class Usercontroller {
     }
 
     @PutMapping("/{id}/email")
-    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN') or hasRole('CUSTOMER_SERVICE')")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<Void> changeEmail(
             @PathVariable Long id,
             @Valid @RequestBody ChangeEmailDto changeEmailDto,

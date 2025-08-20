@@ -3,7 +3,7 @@ package Monsterpedia.it.Monsterpedia.controller;
 import Monsterpedia.it.Monsterpedia.dto.request.AddTastedListRequestDto;
 import Monsterpedia.it.Monsterpedia.dto.response.TastedListDto;
 import Monsterpedia.it.Monsterpedia.exception.NotFoundException;
-import Monsterpedia.it.Monsterpedia.service.TastedLIstService;
+import Monsterpedia.it.Monsterpedia.service.TastedListService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users/{userId}/tasted")
 public class TastedListController {
-    @Autowired private TastedLIstService tastedListService;
+    @Autowired private TastedListService tastedListService;
 
     @GetMapping
     @PreAuthorize("#userId == authentication.principal.id")

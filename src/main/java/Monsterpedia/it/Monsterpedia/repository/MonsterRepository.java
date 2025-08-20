@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MonsterRepository extends JpaRepository<Monster, Long> {
-    Page<Monster> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+    Page<Monster> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
 }

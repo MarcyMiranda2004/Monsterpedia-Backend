@@ -8,14 +8,13 @@ import Monsterpedia.it.Monsterpedia.repository.MonsterRepository;
 import Monsterpedia.it.Monsterpedia.repository.TasteListRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TastedLIstService {
+public class TastedListService {
 
     @Autowired UserService userService;
     @Autowired TasteListRepository tasteListRepository;
