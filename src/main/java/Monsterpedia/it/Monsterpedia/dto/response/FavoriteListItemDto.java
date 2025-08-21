@@ -7,4 +7,6 @@ public class FavoriteListItemDto {
     private Long monsterId;
     private String monsterName;
     private String imageUrl;
+    private Integer rating;
+    private String comment;
 }

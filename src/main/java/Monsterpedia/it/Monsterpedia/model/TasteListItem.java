@@ -26,7 +26,7 @@ public class TasteListItem {
     @JoinColumn(name = "monster_id", nullable = false)
     private Monster monster;
 
-    @Min(0) @Max(5)
+    @Min(1) @Max(10)
     @Column(nullable = false)
     private int rating;
 

@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "favorite_lists")
 public class FavoriteList {
     @Id @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id")

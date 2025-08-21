@@ -9,10 +9,10 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "favorite_lists")
+@Table(name = "tasted_lists")
 public class TasteList {
     @Id @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id")

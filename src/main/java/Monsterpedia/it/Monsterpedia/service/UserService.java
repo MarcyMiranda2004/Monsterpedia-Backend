@@ -45,11 +45,16 @@ public class UserService {
         u.setAvatarUrl("https://ui-avatars.com/api/?name=" +
                 u.getUsername().charAt(0) + "+" + u.getUsername().charAt(1));
         u.setRole(Role.USER);
+
+        FavoriteList fl = new FavoriteList();
+        fl.setUser(u);
+        u.setFavoriteList(fl);
+
+        TasteList ts = new TasteList();
+        ts.setUser(u);
+        u.setTasteList(ts);
+
         User saved = userRepository.save(u);
-
-        FavoriteList fl = new FavoriteList(); fl.setUser(saved); favoriteListRepository.save(fl); saved.setFavoriteList(fl);
-        TasteList ts = new TasteList(); ts.setUser(saved); tasteListRepository.save(ts); saved.setTasteList(ts);
-
         emailService.sendRegistrationConfirmation(saved);
         return saved;
     }
@@ -149,5 +154,14 @@ public class UserService {
         Page<User> page = userRepository
                 .findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query, pageable);
         return page.map(this::toDto);
+    }
+
+    public TasteList getTasteList(User user) {
+        return tasteListRepository.findByUserId(user.getId())
+                .orElseGet(() -> {
+                    TasteList tl = new TasteList();
+                    tl.setUser(user);
+                    return tasteListRepository.save(tl);
+                });
     }
 }

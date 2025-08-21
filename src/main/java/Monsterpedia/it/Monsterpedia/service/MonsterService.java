@@ -52,6 +52,7 @@ public class MonsterService {
         m.setFlavor(requestDto.getFlavor());
         m.setOrigin(requestDto.getOrigin());
         m.setDescription(requestDto.getDescription());
+        m.setStory(requestDto.getStory());
         m.setImageUrl(requestDto.getImageUrl());
         m.setMarcyOpinion(requestDto.getMarcyOpinion());
         Monster updatedMonster = monsterRepository.save(m);

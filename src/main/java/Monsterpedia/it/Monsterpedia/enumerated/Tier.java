@@ -4,12 +4,12 @@ public enum Tier { S, A, B, C, D, F, X
     ;
     public static Tier fromRating(int rating) {
         return switch (rating) {
-            case 5 -> S;
-            case 4 -> A;
-            case 3 -> B;
-            case 2 -> C;
-            case 1 -> D;
-            case 0 -> F;
+            case 10 -> S;
+            case 8, 9 -> A;
+            case 6, 7 -> B;
+            case 4, 5 -> C;
+            case 2, 3 -> D;
+            case 0, 1 -> F;
             default -> X;
         };
     }

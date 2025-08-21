@@ -12,13 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/users/{userId}/favoritelist")
+@RequestMapping("/users/{userId}/favorites")
 public class FavorietListController {
     @Autowired private FavoriteListService favoriteListService;
 
     @GetMapping
     @PreAuthorize("#userId == authentication.principal.id")
-    public ResponseEntity<FavoriteListDto> viewFavoriteList(Long userId) throws NotFoundException {
+    public ResponseEntity<FavoriteListDto> viewFavoriteList(@PathVariable Long userId) throws NotFoundException {
         return ResponseEntity.ok(favoriteListService.viewFavoriteList(userId));
     }
 
