@@ -56,6 +56,7 @@ public class TastedListService {
                 .orElseGet(() -> {
                     TasteList tl = new TasteList();
                     tl.setUser(u);
+                    tasteListRepository.save(tl);
                     return tl;
                 });
         Optional<TasteListItem> existing = tastedList.getItems().stream()

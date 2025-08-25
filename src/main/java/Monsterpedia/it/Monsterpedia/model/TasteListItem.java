@@ -18,7 +18,7 @@ public class TasteListItem {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "taste_list_id", nullable = false)
+    @JoinColumn(name = "taste_list_id", referencedColumnName = "id", nullable = false)
     @JsonBackReference
     private TasteList tasteList;
 
@@ -26,7 +26,7 @@ public class TasteListItem {
     @JoinColumn(name = "monster_id", nullable = false)
     private Monster monster;
 
-    @Min(1) @Max(10)
+    @Min(0) @Max(10)
     @Column(nullable = false)
     private int rating;
 
