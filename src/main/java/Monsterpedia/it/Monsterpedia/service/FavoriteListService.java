@@ -53,6 +53,7 @@ public class FavoriteListService {
         tasteListItemRepository.findByTasteListUserIdAndMonsterId(userId, monster.getId())
                 .ifPresent(taste -> {
                     flid.setRating(taste.getRating());
+                    flid.setTier(taste.getTier());
                     flid.setComment(taste.getComment());
                 });
         return flid;

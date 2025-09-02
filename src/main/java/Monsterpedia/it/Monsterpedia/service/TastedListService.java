@@ -2,6 +2,7 @@ package Monsterpedia.it.Monsterpedia.service;
 
 import Monsterpedia.it.Monsterpedia.dto.response.TastedListDto;
 import Monsterpedia.it.Monsterpedia.dto.response.TastedListItemDto;
+import Monsterpedia.it.Monsterpedia.enumerated.Tier;
 import Monsterpedia.it.Monsterpedia.exception.NotFoundException;
 import Monsterpedia.it.Monsterpedia.model.*;
 import Monsterpedia.it.Monsterpedia.repository.MonsterRepository;
@@ -43,6 +44,7 @@ public class TastedListService {
         tlid.setMonsterName(i.getMonster().getName());
         tlid.setImageUrl(i.getMonster().getImageUrl());
         tlid.setRating(i.getRating());
+        tlid.setTier(Tier.fromRating(i.getRating()));
         tlid.setComment(i.getComment());
         return tlid;
     }
