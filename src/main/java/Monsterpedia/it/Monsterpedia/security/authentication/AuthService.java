@@ -10,15 +10,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JwtTool jwtTool;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Autowired private UserRepository userRepository;
+    @Autowired private JwtTool jwtTool;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     public String login(LoginDto loginDto) throws NotFoundException {
         User user = userRepository.findByEmail(loginDto.getEmail())

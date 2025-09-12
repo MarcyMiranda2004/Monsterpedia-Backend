@@ -22,7 +22,7 @@ public class SmtpEmailService implements EmailService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(noReplyAddress);
         msg.setTo(user.getEmail());
-        msg.setSubject("Benvenuto in Arkadia Libris!");
+        msg.setSubject("Benvenuto in Monsterpedia!");
         msg.setText("Ciao " + user.getUsername() + ",\n\n" +
                 "Grazie per esserti registrato a MonsterPedia.\n\n" +
                 "— Il team MonsterPedia");
@@ -34,7 +34,7 @@ public class SmtpEmailService implements EmailService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(noReplyAddress);
         msg.setTo(user.getEmail());
-        msg.setSubject("Arkadia Libris – Password aggiornata");
+        msg.setSubject("Monsterpedia – Password aggiornata");
         msg.setText("Ciao " + user.getUsername() + ",\n\n" +
                 "La tua password è stata aggiornata con successo.\n\n" +
                 "— Il team MonsterPedia");
@@ -46,7 +46,7 @@ public class SmtpEmailService implements EmailService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(noReplyAddress);
         msg.setTo(currentEmail, newEmail);
-        msg.setSubject("Arkadia Libris – Email aggiornata");
+        msg.setSubject("Monsterpedia – Email aggiornata");
         msg.setText("Ciao " + user.getUsername() + ",\n\n" +
                 "Il tuo indirizzo email è stato modificato da " + currentEmail + " a " + newEmail +  ".\n\n" +
                 "— Il team MonsterPedia");
@@ -58,7 +58,7 @@ public class SmtpEmailService implements EmailService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(noReplyAddress);
         msg.setTo(user.getEmail());
-        msg.setSubject("Arkadia Libris – Account eliminato");
+        msg.setSubject("Monsterpedia – Account eliminato");
         msg.setText("Ciao " + user.getUsername() + ",\n\n" +
                 "Il tuo account è stato eliminato. Motivo: " + reason + ".\n\n" +
                 "— Il team MonsterPedia");
@@ -72,7 +72,7 @@ public class SmtpEmailService implements EmailService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(noReplyAddress);
         msg.setTo(user.getEmail());
-        msg.setSubject("Arkadia Libris – Reset Password");
+        msg.setSubject("Monsterpedia – Reset Password");
         msg.setText(
                 "Ciao " + user.getUsername() + ",\n\n" +
                         "Abbiamo ricevuto una richiesta di reset password.\n" +
