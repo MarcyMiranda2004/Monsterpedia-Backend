@@ -9,6 +9,7 @@ import Monsterpedia.it.Monsterpedia.exception.ValidationException;
 import Monsterpedia.it.Monsterpedia.model.User;
 import Monsterpedia.it.Monsterpedia.service.UserService;
 import jakarta.validation.Valid;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -44,6 +45,23 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUser());
+    }
+
+    @GetMapping("/dto")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<List<UserDto>> getAllUserDtos() {
+        return ResponseEntity.ok(userService.getAllUserDto());
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<User> getUserById(@RequestParam Long id) throws NotFoundException {
+        return ResponseEntity.ok(userService.getUser(id));
+    }
+
+    @GetMapping("/dto/{id}")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<UserDto> getUserDtoById(@PathVariable Long id) throws NotFoundException {
+        return ResponseEntity.ok(userService.getUserDto(id));
     }
 
     @GetMapping("/dto/search")
