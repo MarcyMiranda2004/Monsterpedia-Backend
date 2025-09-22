@@ -3,6 +3,7 @@ package Monsterpedia.it.Monsterpedia.controller;
 import Monsterpedia.it.Monsterpedia.dto.request.ChangeEmailDto;
 import Monsterpedia.it.Monsterpedia.dto.request.ChangePasswordDto;
 import Monsterpedia.it.Monsterpedia.dto.request.DeleteUserDto;
+import Monsterpedia.it.Monsterpedia.dto.request.UpdateUserDto;
 import Monsterpedia.it.Monsterpedia.dto.response.UserDto;
 import Monsterpedia.it.Monsterpedia.exception.NotFoundException;
 import Monsterpedia.it.Monsterpedia.exception.ValidationException;
@@ -110,7 +111,7 @@ public class UserController {
     }
 
     @DeleteMapping("{id}")
-    @PreAuthorize("#id == atuhrentication.principal.id")
+    @PreAuthorize("#id == authentication.principal.id")
     public ResponseEntity<Void> deleteUser(
             @PathVariable long id,
             @RequestBody @Valid DeleteUserDto deleteUserDto,

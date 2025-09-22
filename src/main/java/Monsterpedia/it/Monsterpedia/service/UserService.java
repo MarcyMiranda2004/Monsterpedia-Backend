@@ -83,43 +83,6 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User " + id + " non trovato"));
     }
 
-    public User updateUser(Long id, UpdateUserDto updateUserDto) throws NotFoundException {
-        User u = getUser(id);
-        u.setUsername(updateUserDto.getUsername());
-        return userRepository.save(u);
-    }
-
-    public String updateUserAvatar(Long id, MultipartFile file) throws NotFoundException, IOException {
-        User u = getUser(id);
-        String url = (String) cloudinary.uploader()
-                .upload(file.getBytes(), Collections.emptyMap())
-                .get("url");
-        u.setAvatarUrl(url);
-        userRepository.save(u);
-        return url;
-    }
-
-    @Transactional
-    public void deleteUser(Long id, String rawPassword) throws NotFoundException {
-        User u = getUser(id);
-        if (!passwordEncoder.matches(rawPassword, u.getPassword()))
-            throw new BadCredentialsException("Password non corretta");
-        userRepository.deleteById(id);
-        emailService.sendDeleteAccountNotice(u, "Account eliminato");
-    }
-
-    @Transactional
-    public void updateUserPassword(Long id, ChangePasswordDto changePasswordDto) throws NotFoundException {
-        User u = getUser(id);
-        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), u.getPassword()))
-            throw new BadCredentialsException("La vecchia password non corrisponde");
-        if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmNewPassword()))
-            throw new BadCredentialsException("La nuova password e la conferma non corrispondono");
-        u.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
-        userRepository.save(u);
-        emailService.sendPasswordChangedNotice(u);
-    }
-
     @Transactional
     public void updateUserEmail(Long id, ChangeEmailDto changeEmailDto) throws NotFoundException {
         User u = getUser(id);
@@ -163,5 +126,42 @@ public class UserService {
                     tl.setUser(user);
                     return tasteListRepository.save(tl);
                 });
+    }
+
+    public User updateUser(Long id, UpdateUserDto updateUserDto) throws NotFoundException {
+        User u = getUser(id);
+        u.setUsername(updateUserDto.getUsername());
+        return userRepository.save(u);
+    }
+
+    public String updateUserAvatar(Long id, MultipartFile file) throws NotFoundException, IOException {
+        User u = getUser(id);
+        String url = (String) cloudinary.uploader()
+                .upload(file.getBytes(), Collections.emptyMap())
+                .get("url");
+        u.setAvatarUrl(url);
+        userRepository.save(u);
+        return url;
+    }
+
+    @Transactional
+    public void updateUserPassword(Long id, ChangePasswordDto changePasswordDto) throws NotFoundException {
+        User u = getUser(id);
+        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), u.getPassword()))
+            throw new BadCredentialsException("La vecchia password non corrisponde");
+        if (!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmNewPassword()))
+            throw new BadCredentialsException("La nuova password e la conferma non corrispondono");
+        u.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        userRepository.save(u);
+        emailService.sendPasswordChangedNotice(u);
+    }
+
+    @Transactional
+    public void deleteUser(Long id, String rawPassword) throws NotFoundException {
+        User u = getUser(id);
+        if (!passwordEncoder.matches(rawPassword, u.getPassword()))
+            throw new BadCredentialsException("Password non corretta");
+        userRepository.deleteById(id);
+        emailService.sendDeleteAccountNotice(u, "Account eliminato");
     }
 }
