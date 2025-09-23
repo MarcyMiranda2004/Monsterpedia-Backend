@@ -84,7 +84,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserEmail(Long id, ChangeEmailDto changeEmailDto) throws NotFoundException {
+    public User updateUserEmail(Long id, ChangeEmailDto changeEmailDto) throws NotFoundException {
         User u = getUser(id);
         if (!passwordEncoder.matches(changeEmailDto.getPassword(), u.getPassword()))
             throw new BadCredentialsException("La password non corrisponde");
@@ -95,6 +95,7 @@ public class UserService {
         u.setEmail(changeEmailDto.getNewEmail());
         userRepository.save(u);
         emailService.sendEmailChangeConfirmation(u, changeEmailDto.getNewEmail(), changeEmailDto.getCurrentEmail());
+        return u;
     }
 
     public UserDto saveUserDto(UserDto userDto) {

@@ -10,7 +10,6 @@ import Monsterpedia.it.Monsterpedia.exception.ValidationException;
 import Monsterpedia.it.Monsterpedia.model.User;
 import Monsterpedia.it.Monsterpedia.service.UserService;
 import jakarta.validation.Valid;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -75,11 +74,30 @@ public class UserController {
         return ResponseEntity.ok(page);
     }
 
-    @PatchMapping(path = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("#id == atuhrentication.principal.id")
-    public ResponseEntity<String> updateAvatar(@PathVariable long id, @RequestParam("file") MultipartFile file)
-        throws NotFoundException, IOException {
-        return ResponseEntity.ok(userService.updateUserAvatar(id, file));
+    @PatchMapping("/{id}/avatar")
+    @PreAuthorize("#id == authentication.principal.id")
+    public ResponseEntity<UserDto> updateUserAvatar(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) throws NotFoundException, IOException {
+        String url = userService.updateUserAvatar(id, file);
+        UserDto userDto = userService.getUserDto(id);
+        return ResponseEntity.ok(userDto);
+    }
+
+    @PatchMapping("{id}/username")
+    @PreAuthorize("#id == authentication.principal.id")
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateUserDto updateUserDto,
+            BindingResult br
+    ) throws NotFoundException {
+        if (br.hasErrors()) throw  new jakarta.validation.ValidationException(
+                br.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.joining(";"))
+        );
+        User updateUser = userService.updateUser(id, updateUserDto);
+        UserDto updatedUserDto = userService.getUserDto(id);
+        return ResponseEntity.ok(updatedUserDto);
     }
 
     @PutMapping("/{id}/password")
@@ -98,7 +116,7 @@ public class UserController {
 
     @PutMapping("/{id}/email")
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
-    public ResponseEntity<Void> changeEmail(
+    public ResponseEntity<UserDto> changeEmail(
             @PathVariable Long id,
             @Valid @RequestBody ChangeEmailDto changeEmailDto,
             BindingResult br
@@ -106,14 +124,15 @@ public class UserController {
         if (br.hasErrors()) throw new ValidationException(
                 br.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.joining("; "))
         );
-        userService.updateUserEmail(id, changeEmailDto);
-        return ResponseEntity.noContent().build();
+        User updatedUser = userService.updateUserEmail(id, changeEmailDto);
+        UserDto updatedUserDto = userService.getUserDto(id);
+        return ResponseEntity.ok(updatedUserDto);
     }
 
     @DeleteMapping("{id}")
     @PreAuthorize("#id == authentication.principal.id")
     public ResponseEntity<Void> deleteUser(
-            @PathVariable long id,
+            @PathVariable Long id,
             @RequestBody @Valid DeleteUserDto deleteUserDto,
             BindingResult br
     ) throws NotFoundException {
