@@ -100,20 +100,6 @@ public class UserController {
         return ResponseEntity.ok(updatedUserDto);
     }
 
-    @PutMapping("/{id}/password")
-    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
-    public ResponseEntity<Void> changePassword(
-            @PathVariable Long id,
-            @Valid @RequestBody ChangePasswordDto changePasswordDto,
-            BindingResult br
-    ) throws NotFoundException {
-        if (br.hasErrors()) throw new ValidationException(
-                br.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.joining("; "))
-        );
-        userService.updateUserPassword(id, changePasswordDto);
-        return ResponseEntity.noContent().build();
-    }
-
     @PutMapping("/{id}/email")
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<UserDto> changeEmail(
@@ -127,6 +113,21 @@ public class UserController {
         User updatedUser = userService.updateUserEmail(id, changeEmailDto);
         UserDto updatedUserDto = userService.getUserDto(id);
         return ResponseEntity.ok(updatedUserDto);
+    }
+
+    @PutMapping("/{id}/password")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
+    public ResponseEntity<UserDto> changePassword(
+            @PathVariable Long id,
+            @Valid @RequestBody ChangePasswordDto changePasswordDto,
+            BindingResult br
+    ) throws NotFoundException {
+        if (br.hasErrors()) throw new ValidationException(
+                br.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.joining("; "))
+        );
+        User updatedUser = userService.updateUserPassword(id, changePasswordDto);
+        UserDto updateUserDto = userService.getUserDto(id);
+        return ResponseEntity.ok(updateUserDto);
     }
 
     @DeleteMapping("{id}")

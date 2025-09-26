@@ -83,21 +83,6 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User " + id + " non trovato"));
     }
 
-    @Transactional
-    public User updateUserEmail(Long id, ChangeEmailDto changeEmailDto) throws NotFoundException {
-        User u = getUser(id);
-        if (!passwordEncoder.matches(changeEmailDto.getPassword(), u.getPassword()))
-            throw new BadCredentialsException("La password non corrisponde");
-        if (!u.getEmail().equals(changeEmailDto.getCurrentEmail()))
-            throw new BadCredentialsException("Inserisci l'email corrente corretta");
-        if (!changeEmailDto.getNewEmail().equals(changeEmailDto.getConfirmNewEmail()))
-            throw new BadCredentialsException("La nuova email e la conferma non corrispondono");
-        u.setEmail(changeEmailDto.getNewEmail());
-        userRepository.save(u);
-        emailService.sendEmailChangeConfirmation(u, changeEmailDto.getNewEmail(), changeEmailDto.getCurrentEmail());
-        return u;
-    }
-
     public UserDto saveUserDto(UserDto userDto) {
         return toDto(saveUser(userDto));
     }
@@ -146,7 +131,22 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserPassword(Long id, ChangePasswordDto changePasswordDto) throws NotFoundException {
+    public User updateUserEmail(Long id, ChangeEmailDto changeEmailDto) throws NotFoundException {
+        User u = getUser(id);
+        if (!passwordEncoder.matches(changeEmailDto.getPassword(), u.getPassword()))
+            throw new BadCredentialsException("La password non corrisponde");
+        if (!u.getEmail().equals(changeEmailDto.getCurrentEmail()))
+            throw new BadCredentialsException("Inserisci l'email corrente corretta");
+        if (!changeEmailDto.getNewEmail().equals(changeEmailDto.getConfirmNewEmail()))
+            throw new BadCredentialsException("La nuova email e la conferma non corrispondono");
+        u.setEmail(changeEmailDto.getNewEmail());
+        userRepository.save(u);
+        emailService.sendEmailChangeConfirmation(u, changeEmailDto.getNewEmail(), changeEmailDto.getCurrentEmail());
+        return u;
+    }
+
+    @Transactional
+    public User updateUserPassword(Long id, ChangePasswordDto changePasswordDto) throws NotFoundException {
         User u = getUser(id);
         if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), u.getPassword()))
             throw new BadCredentialsException("La vecchia password non corrisponde");
@@ -155,6 +155,7 @@ public class UserService {
         u.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
         userRepository.save(u);
         emailService.sendPasswordChangedNotice(u);
+        return u;
     }
 
     @Transactional
