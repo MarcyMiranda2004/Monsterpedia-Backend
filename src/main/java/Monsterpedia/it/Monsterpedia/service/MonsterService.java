@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MonsterService {
 
@@ -18,6 +20,12 @@ public class MonsterService {
 
     public Page<MonsterDto> search(String name, Pageable pageable) {
         return monsterRepository.findByNameContainingIgnoreCase(name == null ? "" : name, pageable).map(this::toDto);
+    }
+
+    public List<Monster> getAllMonster() { return monsterRepository.findAll(); }
+
+    public List<Monster> getAllByCategory(String category) {
+        return monsterRepository.findAllByCategory(category);
     }
 
     public MonsterDto getById(Long id) throws NotFoundException {

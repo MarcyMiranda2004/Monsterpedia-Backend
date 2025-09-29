@@ -3,6 +3,7 @@ package Monsterpedia.it.Monsterpedia.controller;
 import Monsterpedia.it.Monsterpedia.dto.request.CreateMonsterRequestDto;
 import Monsterpedia.it.Monsterpedia.dto.response.MonsterDto;
 import Monsterpedia.it.Monsterpedia.exception.NotFoundException;
+import Monsterpedia.it.Monsterpedia.model.Monster;
 import Monsterpedia.it.Monsterpedia.service.MonsterService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/monsters")
@@ -28,7 +31,17 @@ public class MonsterController {
         return ResponseEntity.ok(monsterService.search(name, pageable));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
+    public ResponseEntity<List<Monster>> getAllMonster() {
+        return ResponseEntity.ok(monsterService.getAllMonster());
+    }
+
+    @GetMapping("/category/{category}")
+    public List<Monster> getMonstersByCategory(@PathVariable String category) {
+        return monsterService.getAllByCategory(category);
+    }
+
+    @GetMapping("/id/{id}")
     public ResponseEntity<MonsterDto> getById(@PathVariable Long id) throws NotFoundException {
         return ResponseEntity.ok(monsterService.getById(id));
     }
@@ -45,7 +58,6 @@ public class MonsterController {
         MonsterDto created = monsterService.create(cmrd);
         return ResponseEntity.status(201).body(created);
     }
-
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
