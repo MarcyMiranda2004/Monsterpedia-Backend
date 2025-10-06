@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -33,8 +34,13 @@ public class MonsterController {
 
     @GetMapping
     public ResponseEntity<List<Monster>> getAllMonster() {
-        return ResponseEntity.ok(monsterService.getAllMonster());
+        List<Monster> monsters = monsterService.getAllMonster()
+                .stream()
+                .sorted(Comparator.comparing(Monster::getId))
+                .toList();
+        return ResponseEntity.ok(monsters);
     }
+
 
     @GetMapping("/category/{category}")
     public List<Monster> getMonstersByCategory(@PathVariable String category) {
